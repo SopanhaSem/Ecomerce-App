@@ -38,7 +38,7 @@ class _PageViewScreenState extends State<PageViewScreen> {
           HomeScreen(),
           FavoriteScreen(),
           HistoryScreen(),
-          CheckOutScreen(),
+          CheckOutScreen(data: {}, refId: ""),
         ],
         onPageChanged: (index) {
           _selectedIndex.value = index;

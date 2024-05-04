@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/screen/checkout.dart';
+import 'package:ecomerces/src/screen/userorder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,11 +9,6 @@ class DetailScreen extends StatelessWidget {
   DetailController _controller = Get.put(DetailController());
   final Map data;
   final String refId;
-  // final Function(Map) addToCart;
-
-  // DetailScreen(
-  //     {required this.data, required this.refId, required this.addToCart});
-
   DetailScreen({required this.data, required this.refId});
 
   @override
@@ -43,8 +39,6 @@ class DetailScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 300,
                     child: CachedNetworkImage(
-                      // height: 150, // Reduce image height to make space for text
-                      // width: 200,
                       imageUrl: data['pImg'],
                       fit: BoxFit
                           .contain, // Use BoxFit.cover to maintain aspect ratio
@@ -129,7 +123,13 @@ class DetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: InkWell(
           onTap: () {
-            _controller.addToCart(data);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => OrderScreen(
+                          data: data,
+                          refId: refId,
+                        )));
           },
           child: Container(
             height: 50,
