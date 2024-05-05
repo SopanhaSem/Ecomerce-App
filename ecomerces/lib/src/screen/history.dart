@@ -14,23 +14,7 @@ class HistoryScreen extends StatelessWidget {
           builder: (contexts) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        "History",
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontFamily: "Nunito",
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      noHistory(),
-                    ],
-                  ),
-                ],
-              ),
+              child: noHistory(),
             );
           }),
     );
@@ -39,6 +23,7 @@ class HistoryScreen extends StatelessWidget {
 
 Widget noHistory() {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Image.asset("assets/img/depressed-businessman-isolated_1401-46.jpg"),
       Text(

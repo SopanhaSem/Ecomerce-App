@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart' as badges;
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/screen/checkout.dart';
 import 'package:ecomerces/src/screen/fav_screen.dart';
@@ -20,7 +19,7 @@ class _PageViewScreenState extends State<PageViewScreen> {
       DetailController()); // Use Get.put to initialize and manage controllers
 
   late PageController _controller;
-  RxInt _selectedIndex = 0.obs; // Use RxInt for reactive updates
+  final RxInt _selectedIndex = 0.obs; // Use RxInt for reactive updates
 
   @override
   void initState() {

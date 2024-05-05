@@ -17,21 +17,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
   CollectionReference dataRef =
       FirebaseFirestore.instance.collection("userOrder");
-  CollectionReference dataRef2 =
-      FirebaseFirestore.instance.collection("historyOrder");
-  DetailController controller = Get.put(DetailController());
 
-  initData() {
-    setState(() {
-      widget.data['name'] = widget.data['hname'];
-      widget.data['id'] = widget.data['hid'];
-      widget.data['qty'] = widget.data['hqty'];
-      widget.data['orderImg'] = widget.data['horderImg'];
-      widget.data['price'] = widget.data['hprice'];
-      widget.data['Phone'] = widget.data['hphone'];
-      widget.data['username'] = widget.data['husername'];
-    });
-  }
+  DetailController controller = Get.put(DetailController());
 
   @override
   Widget build(BuildContext context) {
@@ -69,46 +56,17 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             onTap: () async {
-              // await dataRef.get().then((snapshot) {
-              //   for (DocumentSnapshot doc in snapshot.docs) {
-              //     doc.reference.delete();
-              //   }
-              // });
-              if (widget.data == null) {
-                await dataRef2.add({
-                  'hid': widget.data['id'],
-                  'hname': widget.data['name'],
-                  'husername': widget.data['username'],
-                  'horderImg': widget.data['orderImg'],
-                  'hphone': widget.data['Phone'],
-                  'hprice': widget.data[
-                      'price'], // Make sure to use the correct price value
-                  'hqty': widget.data['qty'],
-                }).whenComplete(
-                    () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Order placed successfully!'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        ));
-              } else {
-                await dataRef2.doc(widget.refId).set({
-                  'hid': widget.data['id'],
-                  'hname': widget.data['name'],
-                  'husername': widget.data['username'],
-                  'horderImg': widget.data['orderImg'],
-                  'hphone': widget.data['Phone'],
-                  'hprice': widget.data[
-                      'price'], // Make sure to use the correct price value
-                  'hqty': widget.data['qty'],
-                }).whenComplete(
-                    () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Order placed successfully!'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        ));
-              }
+              await dataRef.get().then((snapshot) {
+                for (DocumentSnapshot doc in snapshot.docs) {
+                  doc.reference.delete();
+                }
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('All orders placed successfully!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             child: Container(
               height: 50,

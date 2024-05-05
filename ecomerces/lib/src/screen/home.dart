@@ -17,6 +17,80 @@ class HomeScreen extends StatelessWidget {
     return DefaultTabController(
       length: 6,
       child: Scaffold(
+        drawer: SafeArea(
+          child: Drawer(
+            // Your drawer content goes here
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const DrawerHeader(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      maxRadius: 30,
+                      backgroundImage: AssetImage(
+                          'assets/img/depressed-businessman-isolated_1401-46.jpg'),
+                    ),
+                    title: Text("Name"),
+                    subtitle: Text("email"),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                ),
+                ListTile(
+                  trailing: Icon(Icons.person),
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    // Add your navigation logic here
+                  },
+                ),
+                ListTile(
+                  trailing: Icon(Icons.favorite),
+                  title: Text(
+                    'Favorite',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    // Add your navigation logic here
+                  },
+                ),
+                ListTile(
+                  trailing: Icon(Icons.shopping_bag_sharp),
+                  title: Text(
+                    'My Order',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    // Add your navigation logic here
+                  },
+                ),
+                ListTile(
+                  trailing: Icon(Icons.settings),
+                  title: Text(
+                    'Setting',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    // Add your navigation logic here
+                  },
+                ),
+                ListTile(
+                  trailing: Icon(Icons.login_outlined),
+                  title: Text(
+                    'Log Out',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    // Add your navigation logic here
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
         backgroundColor: Colors.white,
         body: GetBuilder<DetailController>(
             init: DetailController(),
@@ -25,7 +99,7 @@ class HomeScreen extends StatelessWidget {
                 stream: dataRef.snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Center(
+                    return const Center(
                       child: Icon(
                         Icons.info,
                         color: Colors.red,
@@ -33,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
@@ -42,15 +116,15 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            searchBar(),
+                            searchBar(context),
                             title("Order Online", "Collect In Store"),
                             tabBar(),
                             const SizedBox(height: 20),
                             GridView.builder(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 20.0,
                                 mainAxisSpacing: 20.0,
@@ -79,7 +153,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget searchBar() {
+  Widget searchBar(BuildContext context) {
     return Column(
       children: [
         Row(
@@ -87,7 +161,9 @@ class HomeScreen extends StatelessWidget {
           children: [
             InkWell(
               splashColor: Colors.blue,
-              onTap: () {},
+              onTap: () {
+                Scaffold.of(context).openDrawer();
+              },
               child: Image.asset(
                 "assets/icon/menus.png",
                 fit: BoxFit.cover,
@@ -97,14 +173,14 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               width: 250,
               child: TextField(
-                style: TextStyle(fontSize: 20, fontFamily: "Nunito"),
+                style: const TextStyle(fontSize: 20, fontFamily: "Nunito"),
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
-                  prefixIcon: Image(
+                  prefixIcon: const Image(
                     image: AssetImage("assets/icon/big-magnifying-glass.png"),
                   ),
                   hintText: "Search",
-                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 15),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
@@ -127,7 +203,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text(
                 t1,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   fontFamily: "Nunito",
@@ -139,7 +215,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text(
                 t2,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   fontFamily: "Nunito",
@@ -160,7 +236,7 @@ class HomeScreen extends StatelessWidget {
         child: TabBar(
           onTap: (value) {},
           isScrollable: true,
-          tabs: [
+          tabs: const [
             Tab(
               child: Text(
                 "Wearable",
@@ -238,7 +314,6 @@ Widget productCard(BuildContext context,
     {required Map data, required String refId}) {
   return GestureDetector(
     onTap: () {
-      // Get.to(DetailScreen(data: data, refId: refId));
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -255,7 +330,7 @@ Widget productCard(BuildContext context,
         elevation: 3,
         child: Stack(
           children: [
-            Container(
+            SizedBox(
               width: 200,
               height: 200,
               child: CachedNetworkImage(
@@ -279,21 +354,36 @@ Widget productCard(BuildContext context,
                 children: [
                   Text(
                     data['pName'],
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontFamily: 'Nunito',
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "\$${data['pPrice'].toString()}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Nunito',
                       fontSize: 15,
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
+            const Positioned(
+              right: 0,
+              child: Icon(
+                Icons.star,
+                size: 35,
+                color: Color.fromARGB(207, 255, 255, 0),
+                shadows: [
+                  BoxShadow(
+                      blurRadius: 1,
+                      spreadRadius: 0.5,
+                      offset: Offset(0, 0.2),
+                      color: Colors.black)
+                ],
+              ),
+            )
           ],
         ),
       ),

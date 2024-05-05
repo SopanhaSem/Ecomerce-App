@@ -43,6 +43,8 @@ dependencies:
   cloud_firestore: ^4.14.0
   cached_network_image: ^3.3.1
   badges: ^3.1.2
+  provider: ^6.1.2
+  get_storage: ^2.0.3
 
 dev_dependencies:
   flutter_test:

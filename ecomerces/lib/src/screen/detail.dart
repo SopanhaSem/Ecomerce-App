@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
-import 'package:ecomerces/src/screen/checkout.dart';
+import 'package:ecomerces/src/model/fav_product.dart';
+import 'package:ecomerces/src/provider/fav_provider.dart';
 import 'package:ecomerces/src/screen/userorder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatelessWidget {
   DetailController _controller = Get.put(DetailController());
@@ -13,6 +15,14 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Product product = Product(
+      id: refId,
+      name: data['pName'],
+      imageUrl: data['pImg'],
+      price: double.parse(data['pPrice'].toString()),
+    );
+    var favoritesProvider =
+        Provider.of<FavoritesProvider>(context, listen: false);
     return Scaffold(
       body: GetBuilder<DetailController>(builder: (contexts) {
         return Padding(
@@ -28,8 +38,28 @@ class DetailScreen extends StatelessWidget {
                     },
                     icon: const Icon(Icons.arrow_back_ios),
                   ),
-                  IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.favorite_border))
+                  Builder(
+                    builder: (contexts) => IconButton(
+                      onPressed: () {
+                        var favoritesProvider = Provider.of<FavoritesProvider>(
+                            context,
+                            listen: false);
+                        if (!favoritesProvider.isFavorite(product.id)) {
+                          favoritesProvider.addToFavorites(product);
+                        } else {
+                          favoritesProvider.removeFromFavorites(product.id);
+                        }
+                      },
+                      icon: Icon(
+                        Provider.of<FavoritesProvider>(context)
+                                .isFavorite(product.id)
+                            ? Icons
+                                .favorite // If already in favorites, show filled heart
+                            : Icons
+                                .favorite_border, // Otherwise, show empty heart
+                      ),
+                    ),
+                  ),
                 ],
               ),
               Column(

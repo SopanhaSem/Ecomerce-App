@@ -194,6 +194,12 @@ class _OrderScreenState extends State<OrderScreen> {
                     .data['pPrice'], // Make sure to use the correct price value
                 'qty': onQuantityChanged.value,
               }).whenComplete(() => Navigator.pop(context));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('All orders placed successfully!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             } else {
               await dataRef.doc(widget.refId).set({
                 'id': widget.data['id'],
@@ -205,6 +211,12 @@ class _OrderScreenState extends State<OrderScreen> {
                     .data['pPrice'], // Make sure to use the correct price value
                 'qty': onQuantityChanged.value,
               }).whenComplete(() => Navigator.pop(context));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('All orders placed successfully!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             }
           },
           child: Container(
