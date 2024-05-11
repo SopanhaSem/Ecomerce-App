@@ -31,87 +31,75 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Login",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            TextFielWidget(
-              prefixIcon: Icons.email,
-              hintText: 'Enter E-mail',
-              controller: emailcontroller,
-            ),
-            TextFielWidget(
-              controller: passwordcontroller,
-              prefixIcon: Icons.lock_open_rounded,
-              hintText: 'Enter password',
-              hintPassword: isHintPassword,
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isHintPassword = !isHintPassword;
-                    });
-                  },
-                  icon: Icon(isHintPassword
-                      ? Icons.visibility
-                      : Icons.visibility_off)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CupertinoButton(
-                  color: Colors.blueAccent,
-                  child: const Text('Sign In'),
-                  onPressed: () {
-                    loginUser();
-                  }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "You don't have account?",
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('assets/img/8997265.jpg'),
+            fit: BoxFit.cover,
+          )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 200,
+                height: 200,
+                child: Image.network(
+                  'https://seeklogo.com/images/S/shopify-logo-1C711BCDE4-seeklogo.com.png',
+                  fit: BoxFit.contain,
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SignUpScreen()));
-                  },
-                  child: Text("Create account"),
-                ),
-              ],
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              ),
+              TextFielWidget(
+                prefixIcon: Icons.email,
+                hintText: 'Enter E-mail',
+                controller: emailcontroller,
+              ),
+              TextFielWidget(
+                controller: passwordcontroller,
+                prefixIcon: Icons.lock_open_rounded,
+                hintText: 'Enter password',
+                hintPassword: isHintPassword,
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isHintPassword = !isHintPassword;
+                      });
+                    },
+                    icon: Icon(isHintPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CupertinoButton(
+                    color: Colors.blueAccent,
+                    child: const Text('Sign In'),
+                    onPressed: () {
+                      loginUser();
+                    }),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: const CircleAvatar(
-                      child: Icon(
-                        Icons.facebook,
-                        size: 40,
-                      ),
+                  Text(
+                    "You don't have account?",
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpScreen()));
+                    },
+                    child: Text(
+                      "Create account",
                     ),
                   ),
-                  InkWell(
-                    onTap: () async {},
-                    child: const CircleAvatar(
-                      child: Icon(
-                        Icons.language,
-                        size: 40,
-                      ),
-                    ),
-                  )
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

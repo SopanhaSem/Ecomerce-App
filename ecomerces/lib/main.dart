@@ -1,4 +1,5 @@
 import 'package:ecomerces/src/Getx/controller/controller.dart';
+import 'package:ecomerces/src/auth/view/getstart_screen.dart';
 import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/provider/fav_provider.dart';
 // import 'package:ecomerces/src/screen/pageview.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         onInit: () async {},
         debugShowCheckedModeBanner: false,
         theme: controller.theme,
-        home: LoginScreen(),
+        home: GetStarted(),
       );
     });
   }

@@ -30,45 +30,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Sign-Up",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            TextFielWidget(
-              hintText: 'Username',
-              prefixIcon: Icons.person,
-              controller: usernameController,
-            ),
-            TextFielWidget(
-              hintText: "Email",
-              prefixIcon: Icons.email,
-              controller: emailController,
-            ),
-            TextFielWidget(
-              prefixIcon: Icons.lock_open_rounded,
-              hintText: 'Enter password',
-              hintPassword: isPasswordVisible,
-              controller: passwordController,
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    isPasswordVisible = !isPasswordVisible;
-                  });
-                },
-                icon: Icon(isPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('assets/img/8997265.jpg'),
+            fit: BoxFit.cover,
+          )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 200,
+                height: 200,
+                child: Image.network(
+                  'https://seeklogo.com/images/S/shopify-logo-1C711BCDE4-seeklogo.com.png',
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
-            CupertinoButton(
-              color: Colors.blueAccent,
-              child: Text('Sign-Up'),
-              onPressed: () => _SignUp(),
-            )
-          ],
+              TextFielWidget(
+                hintText: 'Username',
+                prefixIcon: Icons.person,
+                controller: usernameController,
+              ),
+              TextFielWidget(
+                hintText: "Email",
+                prefixIcon: Icons.email,
+                controller: emailController,
+              ),
+              TextFielWidget(
+                prefixIcon: Icons.lock_open_rounded,
+                hintText: 'Enter password',
+                hintPassword: isPasswordVisible,
+                controller: passwordController,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                  icon: Icon(isPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                ),
+              ),
+              CupertinoButton(
+                color: Colors.blueAccent,
+                child: Text('Sign-Up'),
+                onPressed: () => _SignUp(),
+              )
+            ],
+          ),
         ),
       ),
     );

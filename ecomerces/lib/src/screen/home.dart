@@ -5,13 +5,12 @@ import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/screen/detail.dart';
 import 'package:ecomerces/src/screen/profile/profilesetting.dart';
-import 'package:ecomerces/src/screen/userorder_screen.dart';
+import 'package:ecomerces/src/screen/search/searchscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:get_storage/get_storage.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -134,8 +133,11 @@ class HomeScreen extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()));
+              },
+              icon: const Icon(Icons.search),
             ),
           ],
         ),

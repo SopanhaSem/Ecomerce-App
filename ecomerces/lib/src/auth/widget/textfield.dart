@@ -31,7 +31,8 @@ class TextFielWidget extends StatelessWidget {
         width: width ?? double.infinity,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+            color: const Color.fromARGB(158, 255, 255, 255)),
         child: TextField(
           obscureText: hintPassword ?? false,
           controller: controller,
