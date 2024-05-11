@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomerces/src/auth/authuser/user_authentication.dart';
 import 'package:ecomerces/src/auth/view/signup_screen.dart';
 import 'package:ecomerces/src/auth/widget/textfield.dart';
@@ -119,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void loginUser() async {
     User? user = await _auth.signInWithEmailAndPassword(
         emailcontroller.text, passwordcontroller.text);
+
     if (user != null) {
       Navigator.pushAndRemoveUntil(
           context,

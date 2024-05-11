@@ -4,6 +4,8 @@ import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/screen/detail.dart';
+import 'package:ecomerces/src/screen/profile/profilesetting.dart';
+import 'package:ecomerces/src/screen/userorder_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,100 +20,113 @@ class HomeScreen extends StatelessWidget {
   int index = 0;
   SettingController controller = Get.put(SettingController());
   final DetailController _detailController = Get.put(DetailController());
+  User? currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = FirebaseAuth.instance.currentUser;
     return DefaultTabController(
       length: 6,
       child: Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    maxRadius: 30,
-                    backgroundImage: AssetImage(
-                        'assets/img/depressed-businessman-isolated_1401-46.jpg'),
+        drawer: SafeArea(
+          child: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      maxRadius: 30,
+                      backgroundImage: AssetImage(
+                          'assets/img/custom_avatar3_3d-800x800.jpg'),
+                    ),
+                    title: Text(
+                      currentUser?.email?.split('@').first ?? '',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      currentUser?.email ?? '',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                  title: Text("Name"),
-                  subtitle: Text("email"),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    image: DecorationImage(
+                      image: NetworkImage("https://i.imgur.com/ca5GXkg.jpeg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
+                ListTile(
+                  leading: CircleAvatar(
+                    maxRadius: 25,
+                    backgroundColor: Colors.black,
+                    child: Icon(
+                        controller.isDark ? Icons.dark_mode : Icons.light_mode),
+                  ),
+                  trailing: CupertinoSwitch(
+                    value: controller.isDark,
+                    onChanged: controller.changeTheme,
+                  ),
+                  onTap: () {},
                 ),
-              ),
-              ListTile(
-                leading: CircleAvatar(
-                  maxRadius: 25,
-                  backgroundColor: Colors.black,
-                  child: Icon(
-                      controller.isDark ? Icons.dark_mode : Icons.light_mode),
+                ListTile(
+                  trailing: Icon(Icons.person),
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileView(
+                            currentUser: FirebaseAuth.instance.currentUser),
+                      ),
+                    );
+                  },
                 ),
-                trailing: CupertinoSwitch(
-                  value: controller.isDark,
-                  onChanged: controller.changeTheme,
+                ListTile(
+                  trailing: Icon(Icons.favorite),
+                  title: Text(
+                    'Favorite',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {},
                 ),
-                // title:
-                onTap: () {},
-              ),
-              ListTile(
-                trailing: Icon(Icons.person),
-                title: Text(
-                  'Profile',
-                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ListTile(
+                  trailing: Icon(Icons.shopping_bag_sharp),
+                  title: Text(
+                    'My Order',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {},
                 ),
-                onTap: () {
-                  // Add your navigation logic here
-                },
-              ),
-              ListTile(
-                trailing: Icon(Icons.favorite),
-                title: Text(
-                  'Favorite',
-                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ListTile(
+                  trailing: Icon(Icons.settings),
+                  title: Text(
+                    'Setting',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {},
                 ),
-                onTap: () {
-                  // Add your navigation logic here
-                },
-              ),
-              ListTile(
-                trailing: Icon(Icons.shopping_bag_sharp),
-                title: Text(
-                  'My Order',
-                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ListTile(
+                  trailing: Icon(Icons.login_outlined),
+                  title: Text(
+                    'Log Out',
+                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                  ),
+                  onTap: () {
+                    FirebaseAuth.instance.signOut().whenComplete(() =>
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()),
+                            (route) => false));
+                  },
                 ),
-                onTap: () {
-                  // Add your navigation logic here
-                },
-              ),
-              ListTile(
-                trailing: Icon(Icons.settings),
-                title: Text(
-                  'Setting',
-                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                ),
-                onTap: () {
-                  // Add your navigation logic here
-                },
-              ),
-              ListTile(
-                trailing: Icon(Icons.login_outlined),
-                title: Text(
-                  'Log Out',
-                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                ),
-                onTap: () {
-                  FirebaseAuth.instance.signOut().whenComplete(() =>
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false));
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         appBar: AppBar(

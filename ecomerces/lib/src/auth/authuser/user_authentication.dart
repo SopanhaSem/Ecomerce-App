@@ -1,5 +1,8 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+final currentUser = FirebaseAuth.instance.currentUser;
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -8,6 +11,7 @@ class FirebaseAuthService {
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
