@@ -1,17 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/screen/detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:get_storage/get_storage.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   CollectionReference dataRef =
       FirebaseFirestore.instance.collection("products");
   int index = 0;
+  SettingController controller = Get.put(SettingController());
   final DetailController _detailController = Get.put(DetailController());
 
   @override
@@ -19,85 +24,106 @@ class HomeScreen extends StatelessWidget {
     return DefaultTabController(
       length: 6,
       child: Scaffold(
-        drawer: SafeArea(
-          child: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                const DrawerHeader(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      maxRadius: 30,
-                      backgroundImage: AssetImage(
-                          'assets/img/depressed-businessman-isolated_1401-46.jpg'),
-                    ),
-                    title: Text("Name"),
-                    subtitle: Text("email"),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    maxRadius: 30,
+                    backgroundImage: AssetImage(
+                        'assets/img/depressed-businessman-isolated_1401-46.jpg'),
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
+                  title: Text("Name"),
+                  subtitle: Text("email"),
                 ),
-                ListTile(
-                  trailing: Icon(Icons.person),
-                  title: Text(
-                    'Profile',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                  ),
-                  onTap: () {
-                    // Add your navigation logic here
-                  },
+                decoration: BoxDecoration(
+                  color: Colors.blue,
                 ),
-                ListTile(
-                  trailing: Icon(Icons.favorite),
-                  title: Text(
-                    'Favorite',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                  ),
-                  onTap: () {
-                    // Add your navigation logic here
-                  },
+              ),
+              ListTile(
+                leading: CircleAvatar(
+                  maxRadius: 25,
+                  backgroundColor: Colors.black,
+                  child: Icon(
+                      controller.isDark ? Icons.dark_mode : Icons.light_mode),
                 ),
-                ListTile(
-                  trailing: Icon(Icons.shopping_bag_sharp),
-                  title: Text(
-                    'My Order',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                  ),
-                  onTap: () {
-                    // Add your navigation logic here
-                  },
+                trailing: CupertinoSwitch(
+                  value: controller.isDark,
+                  onChanged: controller.changeTheme,
                 ),
-                ListTile(
-                  trailing: Icon(Icons.settings),
-                  title: Text(
-                    'Setting',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                  ),
-                  onTap: () {
-                    // Add your navigation logic here
-                  },
+                // title:
+                onTap: () {},
+              ),
+              ListTile(
+                trailing: Icon(Icons.person),
+                title: Text(
+                  'Profile',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
                 ),
-                ListTile(
-                  trailing: Icon(Icons.login_outlined),
-                  title: Text(
-                    'Log Out',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
-                  ),
-                  onTap: () {
-                    FirebaseAuth.instance.signOut().whenComplete(() =>
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                            (route) => false));
-                  },
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.favorite),
+                title: Text(
+                  'Favorite',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
                 ),
-              ],
-            ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.shopping_bag_sharp),
+                title: Text(
+                  'My Order',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.settings),
+                title: Text(
+                  'Setting',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.login_outlined),
+                title: Text(
+                  'Log Out',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  FirebaseAuth.instance.signOut().whenComplete(() =>
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                          (route) => false));
+                },
+              ),
+            ],
           ),
         ),
-        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text("Home"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search),
+            ),
+          ],
+        ),
         body: GetBuilder<DetailController>(
             init: DetailController(),
             builder: (context) {
@@ -121,8 +147,7 @@ class HomeScreen extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
-                            searchBar(context),
+                            banner(),
                             title("Order Online", "Collect In Store"),
                             tabBar(),
                             const SizedBox(height: 20),
@@ -159,43 +184,39 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget searchBar(BuildContext context) {
-    return Column(
+  Widget banner() {
+    return ImageSlideshow(
+      width: double.infinity,
+      height: 200,
+      initialPage: 0,
+      indicatorColor: Colors.blue,
+      indicatorBackgroundColor: Colors.grey,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              splashColor: Colors.blue,
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: Image.asset(
-                "assets/icon/menus.png",
-                fit: BoxFit.cover,
-                height: 30,
-              ),
-            ),
-            SizedBox(
-              width: 250,
-              child: TextField(
-                style: const TextStyle(fontSize: 20, fontFamily: "Nunito"),
-                textAlign: TextAlign.start,
-                decoration: InputDecoration(
-                  prefixIcon: const Image(
-                    image: AssetImage("assets/icon/big-magnifying-glass.png"),
-                  ),
-                  hintText: "Search",
-                  contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        Image.asset(
+          "assets/img/34b5bf180145769.6505ae7623131.jpg",
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/img/digital-smart-watch-banner-design-template-d7aa954477c61d4aaf74a2001b70e98f_screen.jpg',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/img/maxresdefault.jpg',
+          fit: BoxFit.cover,
         ),
       ],
+
+      /// Called whenever the page in the center of the viewport changes.
+      onPageChanged: (value) {
+        print('Page changed: $value');
+      },
+
+      /// Auto scroll interval.
+      /// Do not auto scroll with null or 0.
+      autoPlayInterval: 3000,
+
+      /// Loops back to first slide.
+      isLoop: true,
     );
   }
 

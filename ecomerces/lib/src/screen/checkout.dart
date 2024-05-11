@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,6 +26,92 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<DetailController>(builder: (contexts) {
       return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    maxRadius: 30,
+                    backgroundImage: AssetImage(
+                        'assets/img/depressed-businessman-isolated_1401-46.jpg'),
+                  ),
+                  title: Text("Name"),
+                  subtitle: Text("email"),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+              ListTile(
+                trailing: Icon(Icons.person),
+                title: Text(
+                  'Profile',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.favorite),
+                title: Text(
+                  'Favorite',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.shopping_bag_sharp),
+                title: Text(
+                  'My Order',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.settings),
+                title: Text(
+                  'Setting',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  // Add your navigation logic here
+                },
+              ),
+              ListTile(
+                trailing: Icon(Icons.login_outlined),
+                title: Text(
+                  'Log Out',
+                  style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                ),
+                onTap: () {
+                  FirebaseAuth.instance.signOut().whenComplete(() =>
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                          (route) => false));
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          title: const Text("Checkout"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search),
+            ),
+          ],
+        ),
         body: StreamBuilder<QuerySnapshot>(
           stream: dataRef.snapshots(),
           builder: (context, snapshot) {
