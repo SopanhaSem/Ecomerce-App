@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuthService _auth = FirebaseAuthService();
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void dispose() {
     emailcontroller.dispose();
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -105,17 +107,40 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _showSnackBar(String message) {
+    final currentContext = _scaffoldKey.currentContext;
+    if (currentContext != null) {
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+    }
+  }
+
   void loginUser() async {
     User? user = await _auth.signInWithEmailAndPassword(
         emailcontroller.text, passwordcontroller.text);
 
     if (user != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => PageViewScreen()),
-          (route) => false);
+      // Save user email and password to Firestore
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': emailcontroller.text,
+          'password': passwordcontroller
+              .text, // Note: Storing passwords in plain text is not recommended for security reasons.
+        });
+        print('Email and password saved to Firestore.');
+
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => PageViewScreen()),
+            (route) => false);
+      } catch (e) {
+        _showSnackBar('Failed to save email and password to Firestore.');
+      }
     } else {
-      print("Login failed");
+      _showSnackBar('Incorrect email or password.');
     }
   }
 }

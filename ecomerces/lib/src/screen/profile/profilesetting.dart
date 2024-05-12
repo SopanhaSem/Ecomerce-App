@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecomerces/src/auth/authuser/user_authentication.dart';
 import 'package:ecomerces/src/auth/view/login_screen.dart';
+import 'package:ecomerces/src/screen/profile/changepassword.dart';
+import 'package:ecomerces/src/screen/profile/editprofilescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatefulWidget {
-  final User? currentUser;
+  User? currentUser;
   ProfileView({super.key, this.currentUser});
 
   @override
@@ -19,11 +19,11 @@ class _ProfileViewState extends State<ProfileView> {
     String username = widget.currentUser?.email?.split('@').first ?? '';
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: const Text("Profile"),
         centerTitle: true,
       ),
       body: Container(
-        decoration: BoxDecoration(),
+        decoration: const BoxDecoration(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -37,65 +37,140 @@ class _ProfileViewState extends State<ProfileView> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 5,
                       blurRadius: 7,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: CircleAvatar(
+                child: const CircleAvatar(
                   radius: 80,
                   backgroundImage:
                       AssetImage('assets/img/custom_avatar3_3d-800x800.jpg'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
-                username,
-                style: TextStyle(
+                widget.currentUser != null
+                    ? widget.currentUser!.displayName ?? ''
+                    : username,
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                '${widget.currentUser?.email ?? ''}',
+                widget.currentUser != null
+                    ? widget.currentUser!.email ?? ''
+                    : '',
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey.shade700,
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit Profile'),
-                onTap: () {
-                  // Add functionality for editing profile
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Profile'),
+                onTap: () async {
+                  final updatedUser = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfileScreen(
+                        currentUser: FirebaseAuth.instance.currentUser,
+                      ),
+                    ),
+                  );
+                  if (updatedUser != null) {
+                    setState(() {
+                      widget.currentUser = updatedUser;
+                    });
+                  }
                 },
               ),
               ListTile(
-                leading: Icon(Icons.security),
-                title: Text('Change Password'),
+                leading: const Icon(Icons.security),
+                title: const Text('Change Password'),
                 onTap: () {
-                  // Add functionality for changing password
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChangePasswordScreen(),
+                    ),
+                  );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.notifications),
-                title: Text('Notification Settings'),
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete Account'),
                 onTap: () {
-                  // Add functionality for notification settings
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Confirm Delete"),
+                        content: const Text(
+                          "Are you sure you want to delete your account?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              // Delete user document from Firestore
+                              try {
+                                await FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(widget.currentUser!.uid)
+                                    .delete();
+                              } catch (error) {
+                                print("Error deleting user document: $error");
+                                // Optionally show an error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Failed to delete user document"),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Delete Firebase Authentication account
+                              try {
+                                await widget.currentUser!.delete();
+                                // Successfully deleted account, navigate to login screen
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              } catch (error) {
+                                print("Error deleting account: $error");
+                                // Optionally show an error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Failed to delete account"),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete Account'),
-                onTap: () {
-                  // Add functionality for deleting account
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Log Out'),
+                leading: const Icon(Icons.logout),
+                title: const Text('Log Out'),
                 onTap: () {
                   FirebaseAuth.instance.signOut().whenComplete(() =>
                       Navigator.pushAndRemoveUntil(

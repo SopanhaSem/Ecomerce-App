@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/auth/view/login_screen.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
+import 'package:ecomerces/src/screen/checkout.dart';
 import 'package:ecomerces/src/screen/detail.dart';
+import 'package:ecomerces/src/screen/fav_screen.dart';
 import 'package:ecomerces/src/screen/profile/profilesetting.dart';
 import 'package:ecomerces/src/screen/search/searchscreen.dart';
+import 'package:ecomerces/src/screen/setting/fontchange.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +21,10 @@ class HomeScreen extends StatelessWidget {
       FirebaseFirestore.instance.collection("products");
   int index = 0;
   SettingController controller = Get.put(SettingController());
-  final DetailController _detailController = Get.put(DetailController());
-  User? currentUser = FirebaseAuth.instance.currentUser;
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
-    User? currentUser = FirebaseAuth.instance.currentUser;
     return DefaultTabController(
       length: 6,
       child: Scaffold(
@@ -34,21 +35,21 @@ class HomeScreen extends StatelessWidget {
               children: [
                 DrawerHeader(
                   child: ListTile(
-                    leading: CircleAvatar(
+                    leading: const CircleAvatar(
                       maxRadius: 30,
                       backgroundImage: AssetImage(
                           'assets/img/custom_avatar3_3d-800x800.jpg'),
                     ),
                     title: Text(
-                      currentUser?.email?.split('@').first ?? '',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                        FirebaseAuth.instance.currentUser?.displayName ?? '',
+                        style: TextStyle(
+                            fontFamily: controller.fontTheme.value.toString())),
                     subtitle: Text(
-                      currentUser?.email ?? '',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                        FirebaseAuth.instance.currentUser?.email ?? '',
+                        style: TextStyle(
+                            fontFamily: controller.fontTheme.value.toString())),
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.blue,
                     image: DecorationImage(
                       image: NetworkImage("https://i.imgur.com/ca5GXkg.jpeg"),
@@ -70,10 +71,11 @@ class HomeScreen extends StatelessWidget {
                   onTap: () {},
                 ),
                 ListTile(
-                  trailing: Icon(Icons.person),
+                  trailing: const Icon(Icons.person),
                   title: Text(
                     'Profile',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                    style: TextStyle(
+                        fontFamily: controller.fontTheme.value.toString()),
                   ),
                   onTap: () {
                     Navigator.push(
@@ -86,34 +88,59 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  trailing: Icon(Icons.favorite),
+                  trailing: const Icon(Icons.favorite),
                   title: Text(
                     'Favorite',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                    style: TextStyle(
+                        fontFamily: controller.fontTheme.value.toString()),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FavoriteScreen()));
+                  },
                 ),
                 ListTile(
-                  trailing: Icon(Icons.shopping_bag_sharp),
+                  trailing: const Icon(Icons.shopping_bag_sharp),
                   title: Text(
                     'My Order',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                    style: TextStyle(
+                        fontFamily: controller.fontTheme.value.toString()),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckOutScreen(
+                          data: {}, // Pass the data parameter
+                          refId: "", // Pass the refId parameter
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
-                  trailing: Icon(Icons.settings),
+                  trailing: const Icon(Icons.settings),
                   title: Text(
                     'Setting',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                    style: TextStyle(
+                        fontFamily: controller.fontTheme.value.toString()),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangeFontScreen()),
+                    );
+                  },
                 ),
                 ListTile(
-                  trailing: Icon(Icons.login_outlined),
+                  trailing: const Icon(Icons.login_outlined),
                   title: Text(
                     'Log Out',
-                    style: TextStyle(fontSize: 18, fontFamily: "Nunito"),
+                    style: TextStyle(
+                        fontFamily: controller.fontTheme.value.toString()),
                   ),
                   onTap: () {
                     FirebaseAuth.instance.signOut().whenComplete(() =>
@@ -129,7 +156,10 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         appBar: AppBar(
-          title: const Text("Home"),
+          title: Text(
+            "Home",
+            style: TextStyle(fontFamily: controller.fontTheme.value.toString()),
+          ),
           centerTitle: true,
           actions: [
             IconButton(
@@ -245,26 +275,16 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                t1,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              Text(t1,
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ],
           ),
           Row(
             children: [
-              Text(
-                t2,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              Text(t2,
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ],
           ),
         ],
@@ -280,72 +300,36 @@ class HomeScreen extends StatelessWidget {
         child: TabBar(
           onTap: (value) {},
           isScrollable: true,
-          tabs: const [
+          tabs: [
             Tab(
-              child: Text(
-                "Wearable",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Wearable",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
-              child: Text(
-                "Laptops",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Laptops",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
-              child: Text(
-                "Phones",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Phones",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
-              child: Text(
-                "Drones",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Drones",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
-              child: Text(
-                "Watch",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Watch",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
-              child: Text(
-                "Keyboard",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: "Nunito",
-                ),
-              ),
+              child: Text("Keyboard",
+                  style: TextStyle(
+                      fontFamily: controller.fontTheme.value.toString())),
             ),
           ],
         ),
@@ -356,6 +340,7 @@ class HomeScreen extends StatelessWidget {
 
 Widget productCard(BuildContext context,
     {required Map data, required String refId}) {
+  SettingController controller = Get.put(SettingController());
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -396,20 +381,12 @@ Widget productCard(BuildContext context,
               right: 0,
               child: Column(
                 children: [
-                  Text(
-                    data['pName'],
-                    style: const TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "\$${data['pPrice'].toString()}",
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 15,
-                    ),
-                  )
+                  Text(data['pName'],
+                      style: TextStyle(
+                          fontFamily: controller.fontTheme.value.toString())),
+                  Text("\$${data['pPrice'].toString()}",
+                      style: TextStyle(
+                          fontFamily: controller.fontTheme.value.toString()))
                 ],
               ),
             ),

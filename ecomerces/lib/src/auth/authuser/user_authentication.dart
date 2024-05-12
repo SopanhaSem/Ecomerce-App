@@ -43,4 +43,32 @@ class FirebaseAuthService {
       return null;
     }
   }
+
+  Future<void> updateDisplayName(String displayName) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await user.updateDisplayName(displayName);
+        print('Display name updated successfully in Firebase Authentication.');
+
+        // Update display name in Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'displayName': displayName});
+        print('Display name updated successfully in Firestore.');
+      } else {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'No user is currently signed in.',
+        );
+      }
+    } catch (e) {
+      print("Failed to update display name: $e");
+      throw FirebaseAuthException(
+        code: 'update-display-name-error',
+        message: 'Failed to update display name: $e',
+      );
+    }
+  }
 }
