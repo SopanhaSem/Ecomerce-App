@@ -36,27 +36,7 @@ class HomeScreen extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   children: [
                     DrawerHeader(
-                      child: ListTile(
-                        leading: const CircleAvatar(
-                          maxRadius: 30,
-                          backgroundImage: AssetImage(
-                              'assets/img/custom_avatar3_3d-800x800.jpg'),
-                        ),
-                        title: Text(
-                            FirebaseAuth.instance.currentUser?.displayName ??
-                                '',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily:
-                                    controller.fontTheme.value.toString())),
-                        subtitle: Text(
-                            FirebaseAuth.instance.currentUser?.email ?? '',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily:
-                                    controller.fontTheme.value.toString())),
-                      ),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.blue,
                         image: DecorationImage(
                           image:
@@ -64,29 +44,49 @@ class HomeScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(
-                        maxRadius: 25,
-                        backgroundColor: Colors.black,
-                        child: Icon(controller.isDark
-                            ? Icons.dark_mode
-                            : Icons.light_mode),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: AssetImage(
+                              'assets/img/custom_avatar3_3d-800x800.jpg',
+                            ),
+                          ),
+                          SizedBox(height: 14),
+                          Text(
+                            FirebaseAuth.instance.currentUser?.displayName ??
+                                '',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: controller.fontTheme.value.toString(),
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            FirebaseAuth.instance.currentUser?.email ?? '',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: controller.fontTheme.value.toString(),
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    _buildListTile(
+                      icon: Icons.lightbulb_outline,
+                      title: 'Theme',
                       trailing: CupertinoSwitch(
                         value: controller.isDark,
                         onChanged: controller.changeTheme,
                       ),
                       onTap: () {},
                     ),
-                    ListTile(
-                      trailing: const Icon(Icons.person),
-                      title: Text(
-                        'Profile',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: controller.fontTheme.value.toString()),
-                      ),
+                    _buildListTile(
+                      icon: Icons.person,
+                      title: 'Profile',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -97,29 +97,20 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
-                      trailing: const Icon(Icons.favorite),
-                      title: Text(
-                        'Favorite',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: controller.fontTheme.value.toString()),
-                      ),
+                    _buildListTile(
+                      icon: Icons.favorite,
+                      title: 'Favorite',
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FavoriteScreen()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FavoriteScreen()),
+                        );
                       },
                     ),
-                    ListTile(
-                      trailing: const Icon(Icons.shopping_bag_sharp),
-                      title: Text(
-                        'My Order',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: controller.fontTheme.value.toString()),
-                      ),
+                    _buildListTile(
+                      icon: Icons.shopping_bag,
+                      title: 'My Order',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -132,14 +123,9 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
-                      trailing: const Icon(Icons.settings),
-                      title: Text(
-                        'Setting',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: controller.fontTheme.value.toString()),
-                      ),
+                    _buildListTile(
+                      icon: Icons.settings,
+                      title: 'Setting',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -148,21 +134,18 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
-                      trailing: const Icon(Icons.login_outlined),
-                      title: Text(
-                        'Log Out',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: controller.fontTheme.value.toString()),
-                      ),
+                    _buildListTile(
+                      icon: Icons.logout,
+                      title: 'Log Out',
                       onTap: () {
-                        FirebaseAuth.instance.signOut().whenComplete(() =>
-                            Navigator.pushAndRemoveUntil(
+                        FirebaseAuth.instance.signOut().whenComplete(
+                              () => Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const LoginScreen()),
-                                (route) => false));
+                                (route) => false,
+                              ),
+                            );
                       },
                     ),
                   ],
@@ -188,61 +171,62 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           body: GetBuilder<DetailController>(
-              init: DetailController(),
-              builder: (context) {
-                return StreamBuilder<QuerySnapshot>(
-                  stream: dataRef.snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Center(
-                        child: Icon(
-                          Icons.info,
-                          color: Colors.red,
+            init: DetailController(),
+            builder: (context) {
+              return StreamBuilder<QuerySnapshot>(
+                stream: dataRef.snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Icon(
+                        Icons.info,
+                        color: Colors.red,
+                      ),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return SafeArea(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            banner(),
+                            title("Order Online", "Collect In Store"),
+                            tabBar(),
+                            const SizedBox(height: 20),
+                            GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 20.0,
+                                mainAxisSpacing: 20.0,
+                                childAspectRatio: 2 / 3,
+                              ),
+                              itemBuilder: (context, index) {
+                                var data = snapshot.data!.docs[index].data()
+                                    as Map<String, dynamic>;
+                                return productCard(
+                                  context,
+                                  data: data,
+                                  refId: snapshot.data!.docs[index].id,
+                                );
+                              },
+                              itemCount: snapshot.data!.docs.length,
+                            ),
+                          ],
                         ),
-                      );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      return SafeArea(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              banner(),
-                              title("Order Online", "Collect In Store"),
-                              tabBar(),
-                              const SizedBox(height: 20),
-                              GridView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 20.0,
-                                  mainAxisSpacing: 20.0,
-                                  childAspectRatio: 2 / 3,
-                                ),
-                                itemBuilder: (context, index) {
-                                  var data = snapshot.data!.docs[index].data()
-                                      as Map<String, dynamic>;
-                                  return productCard(
-                                    context,
-                                    data: data,
-                                    refId: snapshot.data!.docs[index].id,
-                                  );
-                                },
-                                itemCount: snapshot.data!.docs.length,
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                );
-              }),
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          ),
         ),
       );
     });
@@ -269,17 +253,10 @@ class HomeScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ],
-
-      /// Called whenever the page in the center of the viewport changes.
       onPageChanged: (value) {
         print('Page changed: $value');
       },
-
-      /// Auto scroll interval.
-      /// Do not auto scroll with null or 0.
       autoPlayInterval: 3000,
-
-      /// Loops back to first slide.
       isLoop: true,
     );
   }
@@ -292,18 +269,26 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(t1,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontFamily: controller.fontTheme.value.toString())),
+              Text(
+                t1,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           Row(
             children: [
-              Text(t2,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontFamily: controller.fontTheme.value.toString())),
+              Text(
+                t2,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ],
@@ -321,46 +306,70 @@ class HomeScreen extends StatelessWidget {
           isScrollable: true,
           tabs: [
             Tab(
-              child: Text("Wearable",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Wearable",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Tab(
-              child: Text("Laptops",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Laptops",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Tab(
-              child: Text("Phones",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Phones",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Tab(
-              child: Text("Drones",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Drones",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Tab(
-              child: Text("Watch",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Watch",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Tab(
-              child: Text("Keyboard",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontFamily: controller.fontTheme.value.toString())),
+              child: Text(
+                "Keyboard",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: controller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -385,62 +394,78 @@ Widget productCard(BuildContext context,
       padding: const EdgeInsets.all(8.0),
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Set border radius here
+          borderRadius: BorderRadius.circular(15),
         ),
-        elevation: 3,
-        child: Stack(
+        elevation: 5,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 200,
-              height: 200,
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
               child: CachedNetworkImage(
-                height: 150, // Reduce image height to make space for text
-                width: 200,
+                height: 150,
+                width: double.infinity,
                 imageUrl: data['pImg'],
-                fit:
-                    BoxFit.contain, // Use BoxFit.cover to maintain aspect ratio
+                fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     Center(
-                        child: CircularProgressIndicator(
-                            value: downloadProgress.progress)),
+                  child: CircularProgressIndicator(
+                      value: downloadProgress.progress),
+                ),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
-            Positioned(
-              bottom: 1,
-              left: 0,
-              right: 0,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data['pName'],
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: controller.fontTheme.value.toString())),
-                  Text("\$${data['pPrice'].toString()}",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: controller.fontTheme.value.toString()))
+                  Text(
+                    data['pName'],
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: controller.fontTheme.value.toString(),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "\$${data['pPrice'].toString()}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: controller.fontTheme.value.toString(),
+                      color: Colors.grey[600],
+                    ),
+                  ),
                 ],
               ),
             ),
-            const Positioned(
-              right: 0,
-              child: Icon(
-                Icons.star,
-                size: 35,
-                color: Color.fromARGB(207, 255, 255, 0),
-                shadows: [
-                  BoxShadow(
-                      blurRadius: 1,
-                      spreadRadius: 0.5,
-                      offset: Offset(0, 0.2),
-                      color: Colors.black)
-                ],
-              ),
-            )
           ],
         ),
       ),
     ),
+  );
+}
+
+Widget _buildListTile({
+  required IconData icon,
+  required String title,
+  Widget? trailing,
+  required VoidCallback onTap,
+}) {
+  SettingController controller = Get.put(SettingController());
+  return ListTile(
+    leading: Icon(icon, color: Colors.blue),
+    trailing:
+        trailing ?? const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+    title: Text(
+      title,
+      style: TextStyle(
+        fontSize: 18,
+        fontFamily: controller.fontTheme.value.toString(),
+      ),
+    ),
+    onTap: onTap,
   );
 }

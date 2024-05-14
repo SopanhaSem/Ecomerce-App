@@ -11,18 +11,27 @@ class EditProfileScreen extends StatefulWidget {
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen>
+    with SingleTickerProviderStateMixin {
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    // Initialize text controllers with current user data
     _usernameController =
         TextEditingController(text: widget.currentUser?.displayName ?? '');
     _emailController =
         TextEditingController(text: widget.currentUser?.email ?? '');
+
+    // Initialize animation controller
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+    // Start animation
+    _animationController.forward();
   }
 
   @override
@@ -32,30 +41,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: Text("Edit Profile"),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+      body: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _animationController.value,
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(labelText: 'Username'),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _updateProfile();
+                    },
+                    child: Text('Save Changes'),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Call function to update profile
-                _updateProfile();
-              },
-              child: Text('Save Changes'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -80,9 +96,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final updatedUser = FirebaseAuth.instance.currentUser;
       Navigator.pop(context, updatedUser);
     } catch (e) {
-      // Handle error
       print("Failed to update profile: $e");
-      // Display error message to user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to update profile: $e'),
@@ -93,9 +107,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void dispose() {
-    // Dispose text controllers
     _usernameController.dispose();
     _emailController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 }

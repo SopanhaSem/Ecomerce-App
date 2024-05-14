@@ -9,22 +9,22 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class DetailScreen extends StatelessWidget {
-  DetailController _controller = Get.put(DetailController());
+  final DetailController _controller = Get.put(DetailController());
   final Map data;
   final String refId;
+
   DetailScreen({required this.data, required this.refId});
 
   @override
   Widget build(BuildContext context) {
     final SettingController controller = Get.put(SettingController());
-    Product product = Product(
+    final Product product = Product(
       id: refId,
       name: data['pName'],
       imageUrl: data['pImg'],
       price: double.parse(data['pPrice'].toString()),
     );
-    var favoritesProvider =
-        Provider.of<FavoritesProvider>(context, listen: false);
+
     return Scaffold(
       body: GetBuilder<DetailController>(builder: (contexts) {
         return Padding(
@@ -40,27 +40,33 @@ class DetailScreen extends StatelessWidget {
                     },
                     icon: const Icon(Icons.arrow_back_ios),
                   ),
-                  Builder(
-                    builder: (contexts) => IconButton(
-                      onPressed: () {
-                        var favoritesProvider = Provider.of<FavoritesProvider>(
-                            context,
-                            listen: false);
-                        if (!favoritesProvider.isFavorite(product.id)) {
-                          favoritesProvider.addToFavorites(product);
-                        } else {
-                          favoritesProvider.removeFromFavorites(product.id);
-                        }
-                      },
-                      icon: Icon(
-                        Provider.of<FavoritesProvider>(context)
-                                .isFavorite(product.id)
-                            ? Icons
-                                .favorite // If already in favorites, show filled heart
-                            : Icons
-                                .favorite_border, // Otherwise, show empty heart
-                      ),
-                    ),
+                  Consumer<FavoritesProvider>(
+                    builder: (context, favoritesProvider, child) {
+                      bool isFavorite =
+                          favoritesProvider.isFavorite(product.id);
+                      return IconButton(
+                        onPressed: () {
+                          if (!isFavorite) {
+                            favoritesProvider.addToFavorites(product);
+                          } else {
+                            favoritesProvider.removeFromFavorites(product.id);
+                          }
+                        },
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return ScaleTransition(
+                                scale: animation, child: child);
+                          },
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            key: ValueKey<bool>(isFavorite),
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -72,20 +78,20 @@ class DetailScreen extends StatelessWidget {
                     height: 300,
                     child: CachedNetworkImage(
                       imageUrl: data['pImg'],
-                      fit: BoxFit
-                          .contain, // Use BoxFit.cover to maintain aspect ratio
+                      fit: BoxFit.contain,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(
                               child: CircularProgressIndicator(
                                   value: downloadProgress.progress)),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
+                      fadeInDuration: const Duration(milliseconds: 500),
                     ),
                   ),
                   Row(
                     children: [
                       Text(
-                        '${data['pName']}',
+                        data['pName'],
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -94,22 +100,10 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(
-                    'Tune in to the Make it Big Podcast — our thought leadership audio series for retailers, entrepreneurs and ecommerce professionals. You ll get expert insights, strategies and tactics to help grow your business...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: controller.fontTheme.value.toString(),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Full Description",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: controller.fontTheme.value.toString(),
-                      ),
-                    ),
+                  ExpandableText(
+                    text:
+                        'Tune in to the Make it Big Podcast — our thought leadership audio series for retailers, entrepreneurs and ecommerce professionals. You ll get expert insights, strategies and tactics to help grow your business...',
+                    controller: controller,
                   ),
                   Container(
                     height: 50,
@@ -163,30 +157,75 @@ class DetailScreen extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => OrderScreen(
-                          data: data,
-                          refId: refId,
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderScreen(data: data, refId: refId),
+              ),
+            );
           },
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.blueAccent),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.blueAccent,
+            ),
             child: Center(
               child: Text(
                 'Add to basket'.toUpperCase(),
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: controller.fontTheme.value.toString(),
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class ExpandableText extends StatefulWidget {
+  final String text;
+  final SettingController controller;
+
+  ExpandableText({required this.text, required this.controller});
+
+  @override
+  _ExpandableTextState createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<ExpandableText> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          isExpanded ? widget.text : widget.text.substring(0, 100) + '...',
+          style: TextStyle(
+            fontSize: 16,
+            fontFamily: widget.controller.fontTheme.value.toString(),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          child: Text(
+            isExpanded ? "Show Less" : "Show More",
+            style: TextStyle(
+              fontSize: 18,
+              fontFamily: widget.controller.fontTheme.value.toString(),
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

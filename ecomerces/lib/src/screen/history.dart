@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
@@ -15,7 +16,14 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("History"),
+        title: const Text(
+          "History",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Nunito",
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -79,24 +87,35 @@ Widget orderCard(BuildContext context, {required Map data}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     child: Card(
-      elevation: 3,
+      elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(15.0),
       ),
       child: ListTile(
         contentPadding: EdgeInsets.all(12.0),
-        leading: Image.network(
-          data['orderImg'],
-          width: 80.0,
-          height: 80.0,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: CachedNetworkImage(
+            imageUrl: data['orderImg'],
+            width: 80.0,
+            height: 80.0,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              width: 80.0,
+              height: 80.0,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
         ),
         title: Text(
           data['name'],
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 16,
             fontFamily: fcontroller.fontTheme.value.toString(),
+            fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Column(
@@ -105,14 +124,72 @@ Widget orderCard(BuildContext context, {required Map data}) {
             Text(
               '\$${data['price']}',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 16,
                 fontFamily: fcontroller.fontTheme.value.toString(),
+                fontWeight: FontWeight.w600,
+                color: Colors.green,
               ),
             ),
             SizedBox(height: 8.0),
           ],
         ),
-        onTap: () {},
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(data['name']),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: data['orderImg'],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: double.infinity,
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '\$${data['price']}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    data['description'] ?? '',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     ),
   );

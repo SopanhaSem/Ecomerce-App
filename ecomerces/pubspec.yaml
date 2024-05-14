@@ -47,6 +47,7 @@ dependencies:
   get_storage: ^2.0.3
   flutter_image_slideshow: ^0.1.6
   shared_preferences: ^2.2.2
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -106,6 +107,9 @@ flutter:
     - family: Honk
       fonts:
         - asset: assets/fonts/Honk-Regular.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
   #      - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #

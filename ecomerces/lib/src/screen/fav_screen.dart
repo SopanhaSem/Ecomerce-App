@@ -7,8 +7,9 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteScreen extends StatelessWidget {
-  DetailController controller = Get.put(DetailController());
+  final DetailController controller = Get.put(DetailController());
   final SettingController fcontroller = Get.put(SettingController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +19,7 @@ class FavoriteScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 20,
             fontFamily: fcontroller.fontTheme.value.toString(),
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
@@ -35,72 +37,97 @@ class FavoriteScreen extends StatelessWidget {
               List<Product> favorites = favoritesProvider.favorites;
               if (favorites.isEmpty) {
                 return Center(
-                  child: Text(
-                    'No favorite products yet.',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: fcontroller.fontTheme.value.toString(),
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.favorite_border,
+                        size: 100,
+                        color: Colors.grey[400],
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'No favorite products yet.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: fcontroller.fontTheme.value.toString(),
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
 
-              // If there are favorite products, display them
               return ListView.builder(
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   Product product = favorites[index];
-                  return ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    leading: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(product.imageUrl),
-                          fit: BoxFit.contain,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            product.imageUrl,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Icon(Icons.error),
+                          ),
                         ),
+                        title: Text(
+                          product.name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: fcontroller.fontTheme.value.toString(),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '\$${product.price}',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: GestureDetector(
+                          onTap: () {
+                            var favoritesProvider =
+                                Provider.of<FavoritesProvider>(context,
+                                    listen: false);
+                            if (!favoritesProvider.isFavorite(product.id)) {
+                              favoritesProvider.addToFavorites(product);
+                            } else {
+                              favoritesProvider.removeFromFavorites(product.id);
+                            }
+                          },
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 300),
+                            child: Icon(
+                              favoritesProvider.isFavorite(product.id)
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              key: ValueKey<bool>(
+                                  favoritesProvider.isFavorite(product.id)),
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          // Add your onTap logic here
+                        },
                       ),
                     ),
-                    title: Text(
-                      product.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: fcontroller.fontTheme.value.toString(),
-                      ),
-                    ),
-                    subtitle: Text(
-                      '\$${product.price}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {
-                        var favoritesProvider = Provider.of<FavoritesProvider>(
-                            context,
-                            listen: false);
-                        if (!favoritesProvider.isFavorite(product.id)) {
-                          favoritesProvider.addToFavorites(product);
-                        } else {
-                          favoritesProvider.removeFromFavorites(product.id);
-                        }
-                      },
-                      icon: Icon(
-                        Provider.of<FavoritesProvider>(context)
-                                .isFavorite(product.id)
-                            ? Icons
-                                .favorite // If already in favorites, show filled heart
-                            : Icons
-                                .favorite_border, // Otherwise, show empty heart
-                        color: Colors.red,
-                      ),
-                    ),
-                    onTap: () {
-                      // Add your onTap logic here
-                    },
                   );
                 },
               );

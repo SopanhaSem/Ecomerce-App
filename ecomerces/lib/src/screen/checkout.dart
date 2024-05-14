@@ -99,13 +99,23 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
               height: 50,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.blueAccent),
+                  color: Colors.blueAccent,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0, 4),
+                      blurRadius: 5.0,
+                    ),
+                  ]),
               child: Center(
                 child: Text(
                   'Checkout'.toUpperCase(),
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: fcontroller.fontTheme.value.toString(),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ),
@@ -126,25 +136,29 @@ Widget orderCard(BuildContext context,
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     child: Card(
-      elevation: 3,
+      elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(15.0),
       ),
       child: ListTile(
         contentPadding: EdgeInsets.all(12.0),
-        leading: CachedNetworkImage(
-          imageUrl: data['orderImg'],
-          width: 80.0,
-          height: 80.0,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: CachedNetworkImage(
+            imageUrl: data['orderImg'],
+            width: 80.0,
+            height: 80.0,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
         ),
         title: Text(
           data['name'],
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 16,
             fontFamily: fcontroller.fontTheme.value.toString(),
+            fontWeight: FontWeight.bold,
           ),
         ),
         trailing: Row(
@@ -162,8 +176,9 @@ Widget orderCard(BuildContext context,
               () => Text(
                 onQuantityChanged.value.toString(),
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontFamily: fcontroller.fontTheme.value.toString(),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -187,14 +202,72 @@ Widget orderCard(BuildContext context,
             Text(
               '\$${data['price']}',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 16,
                 fontFamily: fcontroller.fontTheme.value.toString(),
+                fontWeight: FontWeight.w600,
+                color: Colors.green,
               ),
             ),
             SizedBox(height: 8.0),
           ],
         ),
-        onTap: () {},
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(data['name']),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: data['orderImg'],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: double.infinity,
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '\$${data['price']}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    data['description'] ?? '',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     ),
   );

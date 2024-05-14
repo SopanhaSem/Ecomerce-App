@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomerces/src/Getx/controller/controller.dart';
+import 'package:ecomerces/src/screen/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,15 +41,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   prefixIcon: Icon(Icons.search),
                 ),
-                onSubmitted: (value) {
-                  setState(() {
-                    if (value.isNotEmpty) {
-                      _searchProducts(value);
-                    } else {
-                      // Reset the stream if the search query is empty
-                      _resetSearch();
-                    }
-                  });
+                onChanged: (value) {
+                  // Trigger search when text changes
+                  _searchProducts(value);
                 },
               ),
             ),
@@ -69,33 +64,33 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 20.0,
-                              mainAxisSpacing: 20.0,
-                              childAspectRatio: 2 / 3,
-                            ),
-                            itemBuilder: (context, index) {
-                              var data = snapshot.data!.docs[index].data()
-                                  as Map<String, dynamic>;
-                              return productCard(
-                                context,
-                                data: data,
-                                refId: snapshot.data!.docs[index].id,
-                              );
-                            },
-                            itemCount: snapshot.data!.docs.length,
-                          )
-                        ],
+                    // Filter products based on search query
+                    final filteredProducts = snapshot.data!.docs.where((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final productName =
+                          data['pName'].toString().toLowerCase();
+                      final searchQuery = _searchController.text.toLowerCase();
+                      return productName.contains(searchQuery);
+                    }).toList();
+
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 20.0,
+                        mainAxisSpacing: 20.0,
+                        childAspectRatio: 2 / 3,
                       ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        var data = filteredProducts[index].data()
+                            as Map<String, dynamic>;
+                        return productCard(
+                          context,
+                          data: data,
+                          refId: filteredProducts[index].id,
+                        );
+                      },
                     );
                   }
                 },
@@ -112,13 +107,18 @@ class _SearchScreenState extends State<SearchScreen> {
     SettingController fcontroller = Get.put(SettingController());
     return GestureDetector(
       onTap: () {
-        // Navigate to product details screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(data: data, refId: refId),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // Set border radius here
+            borderRadius: BorderRadius.circular(10),
           ),
           elevation: 3,
           child: Stack(
@@ -128,10 +128,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 height: 200,
                 child: Image.network(
                   data['pImg'],
-                  height: 150, // Reduce image height to make space for text
+                  height: 150,
                   width: 200,
-                  fit: BoxFit
-                      .contain, // Use BoxFit.cover to maintain aspect ratio
+                  fit: BoxFit.contain,
                 ),
               ),
               Positioned(
@@ -165,10 +164,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   color: Color.fromARGB(207, 255, 255, 0),
                   shadows: [
                     BoxShadow(
-                        blurRadius: 1,
-                        spreadRadius: 0.5,
-                        offset: Offset(0, 0.2),
-                        color: Colors.black)
+                      blurRadius: 1,
+                      spreadRadius: 0.5,
+                      offset: Offset(0, 0.2),
+                      color: Colors.black,
+                    ),
                   ],
                 ),
               )
@@ -181,14 +181,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _searchProducts(String query) {
     setState(() {
-      _searchController.clear();
-      _searchController.text = query;
-    });
-  }
-
-  void _resetSearch() {
-    setState(() {
-      _searchController.clear();
+      // Update the search query
     });
   }
 }
