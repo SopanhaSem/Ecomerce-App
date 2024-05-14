@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SearchScreen extends StatefulWidget {
   SearchScreen({Key? key});
@@ -21,6 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final SettingController fcontroller = Get.put(SettingController());
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -31,6 +34,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search products...',
+                  hintStyle: TextStyle(
+                    fontSize: 20,
+                    fontFamily: fcontroller.fontTheme.value.toString(),
+                  ),
                   prefixIcon: Icon(Icons.search),
                 ),
                 onSubmitted: (value) {
@@ -102,6 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget productCard(BuildContext context,
       {required Map data, required String refId}) {
+    SettingController fcontroller = Get.put(SettingController());
     return GestureDetector(
       onTap: () {
         // Navigate to product details screen
@@ -134,16 +142,16 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Text(
                       data['pName'],
-                      style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: fcontroller.fontTheme.value.toString(),
+                      ),
                     ),
                     Text(
                       "\$${data['pPrice'].toString()}",
-                      style: const TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 15,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: fcontroller.fontTheme.value.toString(),
                       ),
                     )
                   ],

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/model/fav_product.dart';
 import 'package:ecomerces/src/provider/fav_provider.dart';
@@ -15,6 +16,7 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SettingController controller = Get.put(SettingController());
     Product product = Product(
       id: refId,
       name: data['pName'],
@@ -87,7 +89,7 @@ class DetailScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
-                          fontFamily: "Nunito",
+                          fontFamily: controller.fontTheme.value.toString(),
                         ),
                       ),
                     ],
@@ -96,12 +98,18 @@ class DetailScreen extends StatelessWidget {
                     'Tune in to the Make it Big Podcast — our thought leadership audio series for retailers, entrepreneurs and ecommerce professionals. You ll get expert insights, strategies and tactics to help grow your business...',
                     style: TextStyle(
                       fontSize: 16,
-                      fontFamily: "Nunito",
+                      fontFamily: controller.fontTheme.value.toString(),
                     ),
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text("Full Description"),
+                    child: Text(
+                      "Full Description",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: controller.fontTheme.value.toString(),
+                      ),
+                    ),
                   ),
                   Container(
                     height: 50,
@@ -127,15 +135,16 @@ class DetailScreen extends StatelessWidget {
                               "Total :",
                               style: TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Nunito",
+                                fontFamily:
+                                    controller.fontTheme.value.toString(),
                               ),
                             ),
                             Text(
                               '\$${data['pPrice']}',
                               style: TextStyle(
                                 fontSize: 18,
-                                fontFamily: "Nunito",
+                                fontFamily:
+                                    controller.fontTheme.value.toString(),
                               ),
                             ),
                           ],
@@ -169,10 +178,9 @@ class DetailScreen extends StatelessWidget {
             child: Center(
               child: Text(
                 'Add to basket'.toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: "Nunito",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: controller.fontTheme.value.toString(),
                 ),
               ),
             ),

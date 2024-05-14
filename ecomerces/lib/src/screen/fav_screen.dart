@@ -1,20 +1,25 @@
-import 'package:ecomerces/src/auth/view/login_screen.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:ecomerces/src/model/fav_product.dart';
 import 'package:ecomerces/src/provider/fav_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteScreen extends StatelessWidget {
   DetailController controller = Get.put(DetailController());
-
+  final SettingController fcontroller = Get.put(SettingController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Favorites"),
+        title: Text(
+          "Favorites",
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: fcontroller.fontTheme.value.toString(),
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -33,9 +38,9 @@ class FavoriteScreen extends StatelessWidget {
                   child: Text(
                     'No favorite products yet.',
                     style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: "Nunito",
-                        fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
                   ),
                 );
               }
@@ -62,8 +67,8 @@ class FavoriteScreen extends StatelessWidget {
                     title: Text(
                       product.name,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
+                        fontFamily: fcontroller.fontTheme.value.toString(),
                       ),
                     ),
                     subtitle: Text(

@@ -11,7 +11,7 @@ class SettingController extends GetxController {
     update();
   }
 
-  RxList<String> listFont = ['Anta', 'Honk', 'MadimiOne', 'khbb'].obs;
+  RxList<String> listFont = ['Anta', 'Honk', 'Madimi', 'khbb'].obs;
   // void changeFontThem() async {
   //   // fontTheme.value = fontUse.value;
   //   var prefs = await SharedPreferences.getInstance();

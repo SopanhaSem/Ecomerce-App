@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class _OrderScreenState extends State<OrderScreen> {
   TextEditingController usernamecontroller = TextEditingController();
   TextEditingController phonecontroller = TextEditingController();
   DetailController controller = Get.put(DetailController());
+  final SettingController fcontroller = Get.put(SettingController());
 
   initData() {
     setState(() {
@@ -52,12 +54,12 @@ class _OrderScreenState extends State<OrderScreen> {
                   const SizedBox(
                     width: 120,
                   ),
-                  const Text(
+                  Text(
                     "Order",
                     style: TextStyle(
                       fontSize: 20,
-                      fontFamily: "Nunito",
                       fontWeight: FontWeight.bold,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
                     ),
                   ),
                 ],
@@ -81,10 +83,10 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
               Text(
                 widget.data['pName'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
-                  fontFamily: "Nunito",
                   fontWeight: FontWeight.bold,
+                  fontFamily: fcontroller.fontTheme.value.toString(),
                 ),
               ),
               SizedBox(
@@ -120,7 +122,10 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                   Obx(() => Text(
                         onQuantityChanged.value.toString(),
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: fcontroller.fontTheme.value.toString(),
+                        ),
                       )),
                   IconButton(
                     icon: Icon(
@@ -157,8 +162,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           "Total :",
                           style: TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Nunito",
+                            fontFamily: fcontroller.fontTheme.value.toString(),
                           ),
                         ),
                         Obx(
@@ -166,7 +170,8 @@ class _OrderScreenState extends State<OrderScreen> {
                             '\$${(widget.data['pPrice'] * onQuantityChanged.value).toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 18,
-                              fontFamily: "Nunito",
+                              fontFamily:
+                                  fcontroller.fontTheme.value.toString(),
                             ),
                           ),
                         ),
@@ -196,7 +201,13 @@ class _OrderScreenState extends State<OrderScreen> {
               }).whenComplete(() => Navigator.pop(context));
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('All orders placed successfully!'),
+                  content: Text(
+                    'All orders placed successfully!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -213,7 +224,13 @@ class _OrderScreenState extends State<OrderScreen> {
               }).whenComplete(() => Navigator.pop(context));
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('All orders placed successfully!'),
+                  content: Text(
+                    'All orders placed successfully!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -227,10 +244,9 @@ class _OrderScreenState extends State<OrderScreen> {
             child: Center(
               child: Text(
                 'Confirm'.toUpperCase(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: "Nunito",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: fcontroller.fontTheme.value.toString(),
                 ),
               ),
             ),
@@ -245,10 +261,15 @@ Widget inputOrder({
   required String? hintText,
   required TextEditingController? controller,
 }) {
+  final SettingController fcontroller = Get.put(SettingController());
   return SizedBox(
     child: TextField(
       controller: controller,
       decoration: InputDecoration(
+        hintStyle: TextStyle(
+          fontSize: 18,
+          fontFamily: fcontroller.fontTheme.value.toString(),
+        ),
         hintText: hintText,
         border: const OutlineInputBorder(),
       ),

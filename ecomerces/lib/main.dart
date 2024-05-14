@@ -8,8 +8,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  SettingController controller = Get.put(SettingController());
-  // TraslateLanguege lcontroller = Get.put(TraslateLanguege());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await GetStorage.init();

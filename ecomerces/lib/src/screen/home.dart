@@ -25,210 +25,227 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        drawer: SafeArea(
-          child: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                DrawerHeader(
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      maxRadius: 30,
-                      backgroundImage: AssetImage(
-                          'assets/img/custom_avatar3_3d-800x800.jpg'),
-                    ),
-                    title: Text(
-                        FirebaseAuth.instance.currentUser?.displayName ?? '',
-                        style: TextStyle(
-                            fontFamily: controller.fontTheme.value.toString())),
-                    subtitle: Text(
-                        FirebaseAuth.instance.currentUser?.email ?? '',
-                        style: TextStyle(
-                            fontFamily: controller.fontTheme.value.toString())),
-                  ),
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: NetworkImage("https://i.imgur.com/ca5GXkg.jpeg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    maxRadius: 25,
-                    backgroundColor: Colors.black,
-                    child: Icon(
-                        controller.isDark ? Icons.dark_mode : Icons.light_mode),
-                  ),
-                  trailing: CupertinoSwitch(
-                    value: controller.isDark,
-                    onChanged: controller.changeTheme,
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  trailing: const Icon(Icons.person),
-                  title: Text(
-                    'Profile',
-                    style: TextStyle(
-                        fontFamily: controller.fontTheme.value.toString()),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileView(
-                            currentUser: FirebaseAuth.instance.currentUser),
+    return GetBuilder<SettingController>(builder: (contextss) {
+      return DefaultTabController(
+        length: 6,
+        child: Scaffold(
+          drawer: SafeArea(
+            child: GetBuilder<SettingController>(builder: (contexts) {
+              return Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    DrawerHeader(
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          maxRadius: 30,
+                          backgroundImage: AssetImage(
+                              'assets/img/custom_avatar3_3d-800x800.jpg'),
+                        ),
+                        title: Text(
+                            FirebaseAuth.instance.currentUser?.displayName ??
+                                '',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily:
+                                    controller.fontTheme.value.toString())),
+                        subtitle: Text(
+                            FirebaseAuth.instance.currentUser?.email ?? '',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily:
+                                    controller.fontTheme.value.toString())),
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  trailing: const Icon(Icons.favorite),
-                  title: Text(
-                    'Favorite',
-                    style: TextStyle(
-                        fontFamily: controller.fontTheme.value.toString()),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FavoriteScreen()));
-                  },
-                ),
-                ListTile(
-                  trailing: const Icon(Icons.shopping_bag_sharp),
-                  title: Text(
-                    'My Order',
-                    style: TextStyle(
-                        fontFamily: controller.fontTheme.value.toString()),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CheckOutScreen(
-                          data: {}, // Pass the data parameter
-                          refId: "", // Pass the refId parameter
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        image: DecorationImage(
+                          image:
+                              NetworkImage("https://i.imgur.com/ca5GXkg.jpeg"),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  trailing: const Icon(Icons.settings),
-                  title: Text(
-                    'Setting',
-                    style: TextStyle(
-                        fontFamily: controller.fontTheme.value.toString()),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChangeFontScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  trailing: const Icon(Icons.login_outlined),
-                  title: Text(
-                    'Log Out',
-                    style: TextStyle(
-                        fontFamily: controller.fontTheme.value.toString()),
-                  ),
-                  onTap: () {
-                    FirebaseAuth.instance.signOut().whenComplete(() =>
-                        Navigator.pushAndRemoveUntil(
+                    ),
+                    ListTile(
+                      leading: CircleAvatar(
+                        maxRadius: 25,
+                        backgroundColor: Colors.black,
+                        child: Icon(controller.isDark
+                            ? Icons.dark_mode
+                            : Icons.light_mode),
+                      ),
+                      trailing: CupertinoSwitch(
+                        value: controller.isDark,
+                        onChanged: controller.changeTheme,
+                      ),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.person),
+                      title: Text(
+                        'Profile',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: controller.fontTheme.value.toString()),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileView(
+                                currentUser: FirebaseAuth.instance.currentUser),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.favorite),
+                      title: Text(
+                        'Favorite',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: controller.fontTheme.value.toString()),
+                      ),
+                      onTap: () {
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                            (route) => false));
-                  },
+                                builder: (context) => FavoriteScreen()));
+                      },
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.shopping_bag_sharp),
+                      title: Text(
+                        'My Order',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: controller.fontTheme.value.toString()),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckOutScreen(
+                              data: {}, // Pass the data parameter
+                              refId: "", // Pass the refId parameter
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.settings),
+                      title: Text(
+                        'Setting',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: controller.fontTheme.value.toString()),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChangeFontScreen()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.login_outlined),
+                      title: Text(
+                        'Log Out',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: controller.fontTheme.value.toString()),
+                      ),
+                      onTap: () {
+                        FirebaseAuth.instance.signOut().whenComplete(() =>
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                                (route) => false));
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ),
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(fontFamily: controller.fontTheme.value.toString()),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SearchScreen()));
-              },
-              icon: const Icon(Icons.search),
-            ),
-          ],
-        ),
-        body: GetBuilder<DetailController>(
-            init: DetailController(),
-            builder: (context) {
-              return StreamBuilder<QuerySnapshot>(
-                stream: dataRef.snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Center(
-                      child: Icon(
-                        Icons.info,
-                        color: Colors.red,
-                      ),
-                    );
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    return SafeArea(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            banner(),
-                            title("Order Online", "Collect In Store"),
-                            tabBar(),
-                            const SizedBox(height: 20),
-                            GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 20.0,
-                                mainAxisSpacing: 20.0,
-                                childAspectRatio: 2 / 3,
-                              ),
-                              itemBuilder: (context, index) {
-                                var data = snapshot.data!.docs[index].data()
-                                    as Map<String, dynamic>;
-                                return productCard(
-                                  context,
-                                  data: data,
-                                  refId: snapshot.data!.docs[index].id,
-                                );
-                              },
-                              itemCount: snapshot.data!.docs.length,
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                },
               );
             }),
-      ),
-    );
+          ),
+          appBar: AppBar(
+            title: Text(
+              "Home",
+              style:
+                  TextStyle(fontFamily: controller.fontTheme.value.toString()),
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SearchScreen()));
+                },
+                icon: const Icon(Icons.search),
+              ),
+            ],
+          ),
+          body: GetBuilder<DetailController>(
+              init: DetailController(),
+              builder: (context) {
+                return StreamBuilder<QuerySnapshot>(
+                  stream: dataRef.snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Icon(
+                          Icons.info,
+                          color: Colors.red,
+                        ),
+                      );
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return SafeArea(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              banner(),
+                              title("Order Online", "Collect In Store"),
+                              tabBar(),
+                              const SizedBox(height: 20),
+                              GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 20.0,
+                                  mainAxisSpacing: 20.0,
+                                  childAspectRatio: 2 / 3,
+                                ),
+                                itemBuilder: (context, index) {
+                                  var data = snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>;
+                                  return productCard(
+                                    context,
+                                    data: data,
+                                    refId: snapshot.data!.docs[index].id,
+                                  );
+                                },
+                                itemCount: snapshot.data!.docs.length,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                );
+              }),
+        ),
+      );
+    });
   }
 
   Widget banner() {
@@ -277,6 +294,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text(t1,
                   style: TextStyle(
+                      fontSize: 25,
                       fontFamily: controller.fontTheme.value.toString())),
             ],
           ),
@@ -284,6 +302,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text(t2,
                   style: TextStyle(
+                      fontSize: 25,
                       fontFamily: controller.fontTheme.value.toString())),
             ],
           ),
@@ -304,31 +323,43 @@ class HomeScreen extends StatelessWidget {
             Tab(
               child: Text("Wearable",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
               child: Text("Laptops",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
               child: Text("Phones",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
               child: Text("Drones",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
               child: Text("Watch",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
             Tab(
               child: Text("Keyboard",
                   style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
                       fontFamily: controller.fontTheme.value.toString())),
             ),
           ],
@@ -383,9 +414,11 @@ Widget productCard(BuildContext context,
                 children: [
                   Text(data['pName'],
                       style: TextStyle(
+                          fontSize: 18,
                           fontFamily: controller.fontTheme.value.toString())),
                   Text("\$${data['pPrice'].toString()}",
                       style: TextStyle(
+                          fontSize: 18,
                           fontFamily: controller.fontTheme.value.toString()))
                 ],
               ),

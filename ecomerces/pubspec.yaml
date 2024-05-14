@@ -97,6 +97,15 @@ flutter:
     - family: Nunito
       fonts:
         - asset: assets/fonts/Nunito-Regular.ttf
+    - family: khbb
+      fonts:
+        - asset: assets/fonts/khbb.ttf
+    - family: Madimi
+      fonts:
+        - asset: assets/fonts/MadimiOne-Regular.ttf
+    - family: Honk
+      fonts:
+        - asset: assets/fonts/Honk-Regular.ttf
   #      - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #

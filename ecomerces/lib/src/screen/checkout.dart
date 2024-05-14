@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecomerces/src/auth/view/login_screen.dart';
+import 'package:ecomerces/src/Getx/controller/controller.dart';
 import 'package:ecomerces/src/controller/product_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,17 +16,26 @@ class CheckOutScreen extends StatefulWidget {
 class _CheckOutScreenState extends State<CheckOutScreen> {
   DetailController _controller = Get.put(DetailController());
 
-  CollectionReference dataRef =
+  CollectionReference userOrderRef =
       FirebaseFirestore.instance.collection("userOrder");
+  CollectionReference orderHistoryRef =
+      FirebaseFirestore.instance.collection("orderHistory");
 
   DetailController controller = Get.put(DetailController());
+  SettingController fcontroller = Get.put(SettingController());
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DetailController>(builder: (contexts) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Checkout"),
+          title: Text(
+            "Checkout",
+            style: TextStyle(
+              fontSize: 20,
+              fontFamily: fcontroller.fontTheme.value.toString(),
+            ),
+          ),
           centerTitle: true,
           actions: [
             IconButton(
@@ -37,10 +45,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           ],
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: dataRef.snapshots(),
+          stream: userOrderRef.snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              // ignore: prefer_const_constructors
               return Center(
                 child: const Icon(
                   Icons.info,
@@ -68,14 +75,22 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             onTap: () async {
-              await dataRef.get().then((snapshot) {
-                for (DocumentSnapshot doc in snapshot.docs) {
-                  doc.reference.delete();
-                }
-              });
+              QuerySnapshot snapshot = await userOrderRef.get();
+              for (DocumentSnapshot doc in snapshot.docs) {
+                // Save to orderHistory
+                await orderHistoryRef.add(doc.data() as Map<String, dynamic>);
+                // Delete from userOrder
+                await doc.reference.delete();
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('All orders placed successfully!'),
+                  content: Text(
+                    'All orders placed successfully!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: fcontroller.fontTheme.value.toString(),
+                    ),
+                  ),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -88,10 +103,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
               child: Center(
                 child: Text(
                   'Checkout'.toUpperCase(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: "Nunito",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: fcontroller.fontTheme.value.toString(),
                   ),
                 ),
               ),
@@ -105,6 +119,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
 Widget orderCard(BuildContext context,
     {required Map data, required String refId}) {
+  SettingController fcontroller = Get.put(SettingController());
   CollectionReference dataRef =
       FirebaseFirestore.instance.collection("userOrder");
   RxInt onQuantityChanged = RxInt(data['qty']);
@@ -127,7 +142,10 @@ Widget orderCard(BuildContext context,
         ),
         title: Text(
           data['name'],
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 15,
+            fontFamily: fcontroller.fontTheme.value.toString(),
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -143,7 +161,10 @@ Widget orderCard(BuildContext context,
             Obx(
               () => Text(
                 onQuantityChanged.value.toString(),
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: fcontroller.fontTheme.value.toString(),
+                ),
               ),
             ),
             IconButton(
@@ -165,10 +186,12 @@ Widget orderCard(BuildContext context,
           children: [
             Text(
               '\$${data['price']}',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(
+                fontSize: 15,
+                fontFamily: fcontroller.fontTheme.value.toString(),
+              ),
             ),
             SizedBox(height: 8.0),
-            // Add any additional subtitle content here
           ],
         ),
         onTap: () {},
